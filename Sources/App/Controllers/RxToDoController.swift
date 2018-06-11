@@ -10,7 +10,10 @@ final class RxToDoController {
     /// Saves a decoded `Todo` to the database.
     func create(_ req: Request) throws -> [RxToDo] {
         let newToDo =  try JSONDecoder().decode(RxToDo.self, from: req.http.body.data!)
-        newToDo.id = Int(arc4random())
+        if newToDo.id! < 0 {
+            newToDo.id = Int(arc4random())
+        }
+
         RxToDoStore.sharedInstance.addOrUpdateItem(item: newToDo)
 
         return RxToDoStore.sharedInstance.listItems()
