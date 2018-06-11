@@ -6,47 +6,32 @@
 //
 
 import Vapor
-import Fluent
+import FluentSQLite
 
-final class RxToDo: Model {
-    var id: Node?
-    var todoId: Int
+final class RxToDo: SQLiteModel {
+    var id: Int?
     var name: String
     var description: String
     var notes: String
     var completed: Bool
     var synced: Bool
-    var exists: Bool = false
 
-    init(node: Node, in context: Context) throws {
-        id = try node.extract("id")
-        todoId = try node.extract("todoId")
-        name = try node.extract("name")
-        description = try node.extract("description")
-        notes = try node.extract("notes")
-        completed = try node.extract("completed")
-        synced = try node.extract("synced")
-    }
-
-    init(todoId: Int, name: String, description: String, notes: String,
+    init(id: Int, name: String, description: String, notes: String,
          completed: Bool, synced: Bool) {
-        self.todoId = todoId
+        self.id = id
         self.name = name
         self.description = description
         self.notes = notes
         self.completed = completed
         self.synced = synced
     }
-
-    func makeNode(context: Context) throws -> Node {
-        return try Node(node: [
-            "id": id,
-            "todoId": todoId,
-            "name": "\(name)",
-            "description": "\(description)",
-            "notes": "\(notes)",
-            "completed": completed,
-            "synced": synced
-        ])
-    }
 }
+
+/// Allows `Todo` to be used as a dynamic migration.
+extension RxToDo: Migration { }
+
+/// Allows `Todo` to be encoded to and decoded from HTTP messages.
+extension RxToDo: Content { }
+
+/// Allows `Todo` to be used as a dynamic parameter in route definitions.
+extension RxToDo: Parameter { }

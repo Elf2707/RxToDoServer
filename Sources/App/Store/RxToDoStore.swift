@@ -15,7 +15,7 @@ final class RxToDoStore {
     }
 
     func addOrUpdateItem(item: RxToDo) {
-        if self.find(id: item.todoId) != nil {
+        if self.find(id: item.id!) != nil {
             _ = update(item: item)
         } else {
             self.list.append(item)
@@ -27,12 +27,12 @@ final class RxToDoStore {
     }
 
     func find(id: Int) -> RxToDo? {
-        return self.list.index { $0.todoId == id }.map { self.list[$0] }
+        return self.list.index { $0.id == id }.map { self.list[$0] }
     }
 
     func delete(id: Int) -> String {
         if self.find(id: id) != nil {
-            self.list = self.list.filter { $0.todoId != id }
+            self.list = self.list.filter { $0.id != id }
             return "Item is deleted"
         }
 
@@ -49,7 +49,7 @@ final class RxToDoStore {
     }
 
     func update(item: RxToDo) -> String {
-        if let index = (self.list.index { $0.todoId == item.todoId }) {
+        if let index = (self.list.index { $0.id == item.id }) {
             self.list[index] = item
             return "item is up to date"
         }
